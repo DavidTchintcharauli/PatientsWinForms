@@ -1,0 +1,12 @@
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\bin\Release\PatientsForm.exe.config
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\bin\Release\PatientsForm.exe
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\bin\Release\PatientsForm.pdb
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.csproj.AssemblyReference.cache
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.csproj.SuggestedBindingRedirects.cache
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.Form1.resources
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.InsertForm.resources
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.Properties.Resources.resources
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.csproj.GenerateResource.cache
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.csproj.CoreCompileInputs.cache
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.exe
+C:\Users\Geekster PC\Desktop\PatientsForm\PatientsForm\obj\Release\PatientsForm.pdb
