@@ -81,24 +81,27 @@ namespace PatientsForm
             }
 
             // Prepare and execute a query to get the GenderID by GenderName 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlCommand command = new SqlCommand("GetGenderIDByName", connection))
             {
-                connection.Open();
-                string query = "SELECT GenderID FROM Gender WHERE GenderName = @GenderName";
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@GenderName", genderName);
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                SqlParameter returnParam = new SqlParameter("@GenderID", SqlDbType.Int);
+                returnParam.Direction = ParameterDirection.Output;
+                command.Parameters.Add(returnParam);
+
+                // Execute the stored procedure and obtain the output parameter
+                command.ExecuteNonQuery();
+                int GenderID = (int)returnParam.Value;
+
+                // Check if the obtained GenderID is valid 
+                if (GenderID > 0)
                 {
-                    command.Parameters.AddWithValue("@GenderName", genderName);
-                    object result = command.ExecuteScalar();
-                    if (result != null)
-                    {
-                        return Convert.ToInt32(result);
-                    }
-                    else
-                    {
-                        // Handle the case when the gender name is not found
-                        return -1; // or throw an exception
-                    }
+                    return GenderID;
+                }
+                else
+                { 
+                    return -1;
                 }
             }
         }
@@ -212,12 +215,11 @@ namespace PatientsForm
                 // open the Connection
                 connection.Open();
 
-                // Create an INSERT command
-                string insertQuery = "INSERT INTO Patients (FullName, Dob, GenderID, Phone, Address, PersonalID, EMail) " +
-                                     "VALUES (@FullName, @Dob, @GenderID, @Phone, @Address, @PersonalID, @EMail); SELECT SCOPE_IDENTITY()";
-                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                using (SqlCommand command = new SqlCommand("Pacient_Insert", connection))
                 {
-                    // Set parameters for the INSERT command 
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Set parameters for the procedure
                     command.Parameters.AddWithValue("@FullName", fullName);
                     command.Parameters.AddWithValue("@Dob", dob);
                     command.Parameters.AddWithValue("@GenderID", genderId); // Replace with actual GenderID
@@ -239,19 +241,20 @@ namespace PatientsForm
                         MessageBox.Show("შეცდომა დაფიქსირდა პაციენტის ინფორმაციის დამახსოვრებისას", "Save Data Erorr", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
-                this.FormClosed += (s, args) =>
-                {
-                    if (connection.State == ConnectionState.Open)
-                    {
-                        connection.Close();
-                        connection.Dispose();
-                    }
-                };
-
-                // Set DialogResult to Ok to close the form 
-                DialogResult = DialogResult.OK;
             }
+            this.FormClosed += (s, args) =>
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                    connection.Dispose();
+                }
+            };
+
+
+
+            // Set DialogResult to Ok to close the form 
+            DialogResult = DialogResult.OK;
         }
     }
 }

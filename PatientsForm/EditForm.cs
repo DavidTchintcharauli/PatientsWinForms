@@ -37,15 +37,14 @@ namespace PatientsForm
 
         private void LoadPatientData()
         {
-            // Query the database to retrieve patient data based on PatientID
-           string query = "SELECT FullName, Dob, GenderID, Phone, Address, PersonalID, EMail FROM Patients WHERE ID = @PatientID";
-
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand("Pacient_GetByID", connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
+
                     command.Parameters.AddWithValue("@PatientID", patientID);
 
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -79,20 +78,28 @@ namespace PatientsForm
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                string query = "SELECT GenderID FROM Gender WHERE GenderName = @GenderName";
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand("GetGenderIDByName", connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@GenderName", genderName);
-                    object result = command.ExecuteScalar();
-                    if (result != null)
+
+                    SqlParameter returnParam = new SqlParameter("@GenderID", SqlDbType.Int);
+                    returnParam.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(returnParam);
+
+                    // Execute the stored procedure and obtain the output parameter
+                    command.ExecuteNonQuery();
+                    int genderID = (int)returnParam.Value;
+
+                    // Check if the obtained GenderID is valid
+                    if (genderID > 0)
                     {
-                        return Convert.ToInt32(result);
+                        return genderID;
                     }
                     else
                     {
-                        // Handle the case when the gender name is not found
-                        return -1; // or throw an exception
+                        return -1;
                     }
                 }
             }
@@ -210,18 +217,19 @@ namespace PatientsForm
 
             int genderId = GetGenderIdByName(editedGender);
 
-            string updateQuery = "UPDATE Patients SET FullName = @EditedFullName, Dob = @EditedDob, GenderID = @EditedGenderID, Phone = @EditedPhoneNumber, Address = @EditedAddress, PersonalID = @EditedPersonalID, EMail = @EditedEMail WHERE ID = @PatientID";
-
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand(updateQuery, connection))
+                using (SqlCommand command = new SqlCommand("Pacient_Edit", connection))
                 {
-                    // Add parameters to the SQL command for updating patient information
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Add parameters for the procedure
+                    command.Parameters.AddWithValue("@ID", patientID);
                     command.Parameters.AddWithValue("@EditedFullName", editedFullName);
                     command.Parameters.AddWithValue("@EditedDob", editedDob);
                     command.Parameters.AddWithValue("@EditedGenderID", genderId);
-                    command.Parameters.AddWithValue("@EditedPhoneNumber", editedPhoneNumber); // Phone number without dashes
+                    command.Parameters.AddWithValue("@EditedPhone", editedPhoneNumber); // Phone number without dashes
                     command.Parameters.AddWithValue("@EditedAddress", editedAddress);
                     command.Parameters.AddWithValue("@EditedPersonalID", editedPersonalID);
                     command.Parameters.AddWithValue("@EditedEMail", editedEMail);

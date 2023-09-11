@@ -90,16 +90,14 @@ namespace PatientsForm
 
         private void LoadPatientsDate()
         {
-            string query = "SELECT P.ID, P.FullName, P.Dob, G.GenderName, P.Phone, P.Address, P.PersonalID, P.EMail " +
-                           "FROM Patients P " +
-                           "INNER JOIN Gender G ON P.GenderID = G.GenderID";
-
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
-                //connection.Open();
+                connection.Open();
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand("Pacient_GetAll", connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
+
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
@@ -139,15 +137,14 @@ namespace PatientsForm
             // Implement database deletion logic
             try
             {
-                string deleteQuery = "DELETE FROM Patients WHERE ID = @PatientID";
-
                 using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
                     connection.Open();
 
-                    using (SqlCommand command = new SqlCommand(deleteQuery, connection))
+                    using (SqlCommand command = new SqlCommand("Pacient_Delete", connection))
                     {
-                        command.Parameters.AddWithValue("@PatientID", patientID);
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@ID", patientID);
 
                         int rowsAffected = command.ExecuteNonQuery();
 
